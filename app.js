@@ -1,16 +1,7 @@
-const GITHUB_TOKEN = 'your_token_for_testing' // we'll move this to env later
 const REPO = 'risc0/risc0' // e.g. 'facebook/react'
 
 async function fetchGithubEvents() {
-  const resp = await fetch(
-    `https://api.github.com/repos/${REPO}/events`,
-    {
-      headers: {
-        Authorization: `Bearer ${GITHUB_TOKEN}`,
-        'Accept': 'application/vnd.github.v3+json',
-      }
-    }
-  )
+  const resp = await fetch('/api/github')
   return await resp.json()
 }
 
