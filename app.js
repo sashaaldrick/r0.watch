@@ -1,9 +1,23 @@
 async function init() {
   const output = document.getElementById('output')
+  const summaryDiv = document.getElementById('summary')
   output.innerHTML = '<div class="loading">Loading...</div>'
   
   const resp = await fetch('/api/github')
-  const prs = await resp.json()
+  const { prs, summary, timestamp, error } = await resp.json()
+  
+  // display summary if available
+  if (summary) {
+    summaryDiv.innerHTML = `
+      <h2>TLDR;</h2>
+      ${summary}
+      <div class="last-updated">
+        Last updated: ${new Date(timestamp).toLocaleString()}
+        ${error ? `<br><span class="error">${error}</span>` : ''}
+      </div>
+    `
+    summaryDiv.classList.add('active')
+  }
   
   output.innerHTML = prs
     .filter(pr => pr.merged_at)
@@ -16,39 +30,6 @@ async function init() {
         ${pr.body ? `<div class="description">${pr.body}</div>` : ''}
       </div>
     `).join('')
-
-  // Setup TLDR button
-  const tldrButton = document.getElementById('tldrButton')
-  const summaryDiv = document.getElementById('summary')
-  
-  tldrButton.onclick = async () => {
-    tldrButton.disabled = true
-    tldrButton.textContent = 'Generating...'
-    
-    try {
-      const summaryResp = await fetch('/api/summarize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prs })
-      })
-      const { summary } = await summaryResp.json()
-      
-      summaryDiv.innerHTML = `
-        <h2>TLDR;</h2>
-        ${summary}
-      `
-      summaryDiv.classList.add('active')
-    } catch (e) {
-      summaryDiv.innerHTML = `
-        <h2>Error</h2>
-        Failed to generate summary: ${e.message}
-      `
-      summaryDiv.classList.add('active')
-    } finally {
-      tldrButton.disabled = false
-      tldrButton.textContent = 'Get TLDR'
-    }
-  }
 }
 
 init()
