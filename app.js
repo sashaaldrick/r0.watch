@@ -10,8 +10,9 @@ async function init() {
   if (summary) {
     summaryDiv.innerHTML = `
       <h2>TLDR;</h2>
-      ${summary}
-      <br>
+      <div class="summary-content">
+        ${summary}
+      </div>
       <div class="last-updated">
         Last updated: ${new Date(timestamp).toLocaleString()}
         ${error ? `<br><span class="error">${error}</span>` : ''}

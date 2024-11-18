@@ -11,7 +11,7 @@ export async function onRequest(context) {
     // check cache first
     const cached = await cache.get('cached_data', 'json')
     const now = Date.now()
-    
+
     // if cache exists and less than 1 hour old, return it
     if (cached && (now - cached.timestamp) < 3600000) {
       return new Response(JSON.stringify(cached), { headers })
@@ -28,12 +28,20 @@ export async function onRequest(context) {
         }
       }
     )
-    
+
     const prs = await response.json()
 
     // generate new summary
-    const prompt = `Summarize these recent RISC Zero merged PRs in 2-3 sentences, focusing on the main themes and important changes:
-      ${prs.filter(pr => pr.merged_at).map(pr => `- ${pr.title}: ${pr.body || 'no description'}`).join('\n')}
+    const prompt = `Summarize these recent RISC Zero merged PRs as HTML bullet points. Use <ul> and <li> tags.
+    Make important terms, PR numbers, and technical terms bold using <b> tags. Start with a brief overall summary paragraph.
+    Format:
+    <p>Overall summary...</p>
+    <ul>
+    <li>Point about PR <b>#123</b>: technical detail with <b>important terms</b></li>
+    </ul>
+
+    PRs to summarize:
+    ${prs.filter(pr => pr.merged_at).map(pr => `- #${pr.number}: ${pr.title}: ${pr.body || 'no description'}`).join('\n')}
     `
 
     const geminiResp = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
@@ -75,9 +83,9 @@ export async function onRequest(context) {
       }), { headers })
     }
 
-    return new Response(JSON.stringify({ error: e.message }), { 
-      status: 500, 
-      headers 
+    return new Response(JSON.stringify({ error: e.message }), {
+      status: 500,
+      headers
     })
   }
 }
