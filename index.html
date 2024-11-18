@@ -20,14 +20,29 @@
       border-radius: 4px;
       margin-bottom: 2rem;
       border-left: 4px solid #58a6ff;
+      display: none;  /* hidden by default */
     }
-    .summary h2 {
-      margin-top: 0;
-      color: #58a6ff;
+    .summary.active {
+      display: block;
+    }
+    button {
+      background: #58a6ff;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: wait;
     }
   </style>
 </head>
 <body>
+  <button id="tldrButton">Get TLDR</button>
+  <div id="summary" class="summary"></div>
   <div id="output"></div>
 </body>
 </html>
