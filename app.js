@@ -11,6 +11,7 @@ async function init() {
     summaryDiv.innerHTML = `
       <h2>TLDR;</h2>
       ${summary}
+      <br>
       <div class="last-updated">
         Last updated: ${new Date(timestamp).toLocaleString()}
         ${error ? `<br><span class="error">${error}</span>` : ''}
