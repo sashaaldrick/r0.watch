@@ -4,7 +4,8 @@ export async function onRequest(context) {
     {
       headers: {
         'Authorization': `token ${context.env.GITHUB_TOKEN}`,
-        'Accept': 'application/vnd.github.v3+json'
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'r0-watch'
       }
     }
   )
