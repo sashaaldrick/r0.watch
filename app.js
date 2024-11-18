@@ -2,7 +2,15 @@ const REPO = 'risc0/risc0' // e.g. 'facebook/react'
 
 async function fetchGithubEvents() {
   const resp = await fetch('/api/github')
-  return await resp.json()
+  const data = await resp.json()
+  
+  // if we got an error object instead of array
+  if (!Array.isArray(data) && data.error) {
+    throw new Error(data.error)
+  }
+  
+  // ensure we always return an array
+  return Array.isArray(data) ? data : []
 }
 
 async function summarizeEvent(event) {
@@ -26,7 +34,7 @@ let lastEventId = null
 async function checkForUpdates() {
   try {
     const events = await fetchGithubEvents()
-    const newEvents = lastEventId 
+    const newEvents = lastEventId
       ? events.filter(e => e.id > lastEventId)
       : events.slice(0, 5)
 
